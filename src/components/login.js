@@ -5,7 +5,6 @@ import { Machine, assign } from "xstate";
 const isNoResponse = () => Math.random() >= 0.75;
 
 const signIn = (email, password) => {
-  console.log("email", email, "password", password);
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (email !== "admin") {
@@ -13,7 +12,6 @@ const signIn = (email, password) => {
       }
 
       if (password !== "admin") {
-        console.log("i am rejecting: incorrect password");
         return reject({ code: 2 });
       }
 
@@ -26,7 +24,7 @@ const signIn = (email, password) => {
   });
 };
 
-const toggleMachine = Machine({
+const loginStateMachine = Machine({
   id: "login",
   context: {
     email: "",
@@ -60,7 +58,6 @@ const toggleMachine = Machine({
               initial: "empty",
               states: {
                 empty: {},
-                noAccount: {},
               },
             },
           },
@@ -73,7 +70,6 @@ const toggleMachine = Machine({
               initial: "empty",
               states: {
                 empty: {},
-                incorrect: {},
               },
             },
           },
@@ -90,7 +86,7 @@ const toggleMachine = Machine({
                     SUBMIT: "#login.waitingResponse",
                   },
                 },
-                internal: {},
+                authentication: {},
               },
             },
           },
@@ -106,11 +102,11 @@ const toggleMachine = Machine({
         onError: [
           {
             cond: "isNoAccount",
-            target: "ready.email.error.noAccount",
+            target: "ready.authService.error.authentication",
           },
           {
             cond: "isIncorrectPassword",
-            target: "ready.password.error.incorrect",
+            target: "ready.authService.error.authentication",
           },
           {
             cond: "isNoResponse",
@@ -148,65 +144,58 @@ const initMachineOptions = () => ({
   },
 });
 
-const Toggler = () => {
-  const [state, send] = useMachine(toggleMachine, initMachineOptions());
+const LogInForm = () => {
+  const [state, send] = useMachine(loginStateMachine, initMachineOptions());
 
-  console.log(state.value);
+  const handleEmailChange = (e) => {
+    send({ type: "INPUT_EMAIL", email: e.target.value });
+  };
+  const handlePasswordChange = (e) => {
+    send({ type: "INPUT_PASSWORD", password: e.target.value });
+  };
+  const handleSubmit = () => {
+    send({ type: "SUBMIT" });
+  };
+
   return (
     <div>
-      {(state.matches("waitingResponse") ||
-        state.value === "waitingResponse") && <h1>Loading...</h1>}
-      {state.matches("ready.authService.error.communication") && (
-        <p>Issue logging in. Try again.</p>
-      )}
-      {state.matches("ready.email.error") && (
-        <div>
-          {state.matches("ready.email.error.empty") && "Email is empty"}
-          {state.matches("ready.email.error.noAccount") &&
-            "Account does not exist with this email"}
-        </div>
-      )}
-      {state.matches("ready.password.error") && (
-        <div>
-          {state.matches("ready.password.error.empty") && "Password is empty"}
-          {state.matches("ready.password.error.incorrect") &&
-            "Email/password combination does not match"}
-        </div>
-      )}
-      <label>
-        email:
-        <input
-          type="text"
-          value={state.context.email}
-          onChange={(e) => {
-            send({
-              type: "INPUT_EMAIL",
-              email: e.target.value,
-            });
-          }}
-        />
-      </label>
-
-      <label>
-        password:
-        <input
-          type="password"
-          value={state.context.password}
-          onChange={(e) => {
-            send({ type: "INPUT_PASSWORD", password: e.target.value });
-          }}
-        />
-      </label>
+      <div>
+        <label>
+          Email:
+          <input
+            type="text"
+            value={state.context.email}
+            onChange={handleEmailChange}
+          />
+        </label>
+      </div>
+      <div>
+        <label>
+          Password:
+          <input
+            type="password"
+            value={state.context.password}
+            onChange={handlePasswordChange}
+          />
+        </label>
+      </div>
 
       <button
-        onClick={() => {
-          send({ type: "SUBMIT" });
-        }}
+        disabled={state.matches("waitingResponse")}
+        onClick={handleSubmit}
       >
         Login
       </button>
+
+      {state.matches("waitingResponse") && <p>Signing in...</p>}
+      {state.matches("ready.authService.error.communication") &&
+        "Something happened with the network call. Try again."}
+      {state.matches("ready.authService.error.authentication") &&
+        "Email/password combination do not match."}
+      {state.matches("ready.email.error.empty") && "Email is blank."}
+      {state.matches("ready.password.error.empty") && "Password is blank."}
     </div>
   );
 };
 
-export default Toggler;
+export default LogInForm;

@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
-import Toggler from "./components/toggler";
+import LogInForm from "./components/login";
 
 function Counter() {
-  const [count, setCount] = useState(0);
-
   return (
     <div>
-      <Toggler />
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>+</button>
+      <LogInForm />
     </div>
   );
 }
