@@ -11,7 +11,8 @@ const LogInForm = () => {
   const handlePasswordChange = (e) => {
     send({ type: "INPUT_PASSWORD", password: e.target.value });
   };
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     send({ type: "SUBMIT" });
   };
 

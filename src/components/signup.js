@@ -1,9 +1,9 @@
 import React from "react";
 import { useMachine } from "@xstate/react";
-import { signupStateMachine, initSignupOptions } from "./signupStateMachine";
+import { signupStateMachine, initMachineOptions } from "./signupStateMachine";
 
-const LogInForm = () => {
-  const [state, send] = useMachine(signupStateMachine, initSignupOptions);
+const SignupForm = () => {
+  const [state, send] = useMachine(signupStateMachine, initMachineOptions);
 
   const handleCompanyNameChange = (e) => {
     send({ type: "INPUT_COMPANY_NAME", companyName: e.target.value });
@@ -29,13 +29,21 @@ const LogInForm = () => {
       passwordConfirmation: e.target.value,
     });
   };
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     send({ type: "SUBMIT" });
   };
 
+  console.log(state.value);
   return (
     <form onSubmit={handleSubmit}>
       <div>
+        {state.matches("ready.companyName.error.empty") && (
+          <div>Company name shouldn't be empty</div>
+        )}
+        {state.matches("ready.companyName.error.companyNameTaken") && (
+          <div>Company name is already taken</div>
+        )}
         <label>
           Company Name
           <input
@@ -46,6 +54,12 @@ const LogInForm = () => {
         </label>
       </div>
       <div>
+        {state.matches("ready.email.error.empty") && (
+          <div>Email shouldn't be empty</div>
+        )}
+        {state.matches("ready.email.error.emailTaken") && (
+          <div>Email is already taken</div>
+        )}
         <label>
           Email
           <input
@@ -56,6 +70,9 @@ const LogInForm = () => {
         </label>
       </div>
       <div>
+        {state.matches("ready.firstName.error.empty") && (
+          <div>First name shouldn't be empty</div>
+        )}
         <label>
           First Name
           <input
@@ -66,6 +83,9 @@ const LogInForm = () => {
         </label>
       </div>
       <div>
+        {state.matches("ready.lastName.error.empty") && (
+          <div>Last name shouldn't be empty</div>
+        )}
         <label>
           Last Name
           <input
@@ -76,6 +96,9 @@ const LogInForm = () => {
         </label>
       </div>
       <div>
+        {state.matches("ready.phoneNumber.error.empty") && (
+          <div>Phone number shouldn't be empty</div>
+        )}
         <label>
           Phone Number
           <input
@@ -86,6 +109,9 @@ const LogInForm = () => {
         </label>
       </div>
       <div>
+        {state.matches("ready.password.error.empty") && (
+          <div>Password shouldn't be empty</div>
+        )}
         <label>
           Password
           <input
@@ -96,6 +122,9 @@ const LogInForm = () => {
         </label>
       </div>
       <div>
+        {state.matches("ready.passwordConfirmation.error.empty") && (
+          <div>Password confirmation shouldn't be empty</div>
+        )}
         <label>
           Re-Enter Password
           <input
@@ -113,16 +142,8 @@ const LogInForm = () => {
       >
         Create Account
       </button>
-
-      {state.matches("waitingResponse") && <p>Signing in...</p>}
-      {state.matches("ready.authService.error.communication") &&
-        "Something happened with the network call. Try again."}
-      {state.matches("ready.authService.error.authentication") &&
-        "Email/password combination do not match."}
-      {state.matches("ready.email.error.empty") && "Email is blank."}
-      {state.matches("ready.password.error.empty") && "Password is blank."}
     </form>
   );
 };
 
-export default LogInForm;
+export default SignupForm;

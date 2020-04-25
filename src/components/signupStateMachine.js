@@ -16,40 +16,43 @@ const signupStateMachine = Machine({
   on: {
     INPUT_COMPANY_NAME: {
       actions: "cacheCompanyName",
-      target: [],
+      target: ["ready.companyName.noError"],
     },
     INPUT_EMAIL: {
       actions: "cacheEmail",
-      target: [],
+      target: ["ready.email.noError"],
     },
     INPUT_FIRST_NAME: {
       actions: "cacheFirstName",
-      target: [],
+      target: ["ready.firstName.noError"],
     },
     INPUT_LAST_NAME: {
       actions: "cacheLastName",
-      target: [],
+      target: ["ready.lastName.noError"],
     },
     INPUT_PHONE_NUMBER: {
       actions: "cachePhoneNumber",
-      target: [],
+      target: ["ready.phoneNumber.noError"],
     },
     INPUT_PASSWORD: {
       actions: "cachePassword",
-      target: [],
+      target: ["ready.password.noError"],
     },
     INPUT_PASSWORD_CONFIRMATION: {
       actions: "cachePasswordConfirmation",
-      target: [],
+      target: ["ready.passwordConfirmation.noError"],
     },
     SUBMIT: [
-      { cond: "isNoCompanyName", target: [] },
+      { cond: "isNoCompanyName", target: "ready.companyName.error.empty" },
       { cond: "isNoEmail", target: "ready.email.error.empty" },
-      { cond: "isNoFirstName", target: [] },
-      { cond: "isNoLastName", target: [] },
-      { cond: "isNoPhoneNumber", target: [] },
-      { cond: "isNoPassword", target: [] },
-      { cond: "isNoPasswordConfirmation", target: [] },
+      { cond: "isNoFirstName", target: "ready.firstName.error.empty" },
+      { cond: "isNoLastName", target: "ready.lastName.error.empty" },
+      { cond: "isNoPhoneNumber", target: "ready.phoneNumber.error.empty" },
+      { cond: "isNoPassword", target: "ready.password.error.empty" },
+      {
+        cond: "isNoPasswordConfirmation",
+        target: "ready.passwordConfirmation.error.empty",
+      },
       { target: "waitingResponse" },
     ],
   },
@@ -63,7 +66,7 @@ const signupStateMachine = Machine({
             noError: {},
             error: {
               intial: "empty",
-              states: { empty: {} },
+              states: { empty: {}, companyNameTaken: {} },
             },
           },
         },
@@ -75,6 +78,7 @@ const signupStateMachine = Machine({
               initial: "empty",
               states: {
                 empty: {},
+                emailTaken: {},
               },
             },
           },
@@ -147,8 +151,6 @@ const signupStateMachine = Machine({
                     SUBMIT: "#signup.waitingResponse",
                   },
                 },
-                companyNameTaken: {},
-                emailTaken: {},
               },
             },
           },
@@ -164,11 +166,11 @@ const signupStateMachine = Machine({
         onError: [
           {
             cond: "isCompanyNameTaken",
-            target: "ready.authService.error.companyNameTaken",
+            target: "ready.companyName.error.companyNameTaken",
           },
           {
             cond: "isEmailTaken",
-            target: "ready.authService.error.emailTaken",
+            target: "ready.email.error.emailTaken",
           },
           {
             cond: "isNoResponse",
