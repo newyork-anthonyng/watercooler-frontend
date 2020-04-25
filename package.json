@@ -1,0 +1,28 @@
+{
+  "name": "watercooler-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "dependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^4.2.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/newyork-anthonyng/watercooler-frontend.git"
+  },
+  "author": "Anthony Ng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/newyork-anthonyng/watercooler-frontend/issues"
+  },
+  "homepage": "https://github.com/newyork-anthonyng/watercooler-frontend#readme",
+  "keywords": []
+}
