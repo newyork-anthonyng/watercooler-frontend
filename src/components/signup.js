@@ -1,6 +1,6 @@
 import React from "react";
 import { useMachine } from "@xstate/react";
-import { signupStateMachine, initSignupOptions } from "./loginStateMachine";
+import { signupStateMachine, initSignupOptions } from "./signupStateMachine";
 
 const LogInForm = () => {
   const [state, send] = useMachine(signupStateMachine, initSignupOptions);

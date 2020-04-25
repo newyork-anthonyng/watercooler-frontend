@@ -144,7 +144,7 @@ const signupStateMachine = Machine({
               states: {
                 communication: {
                   on: {
-                    SUBMIT: "#login.waitingResponse",
+                    SUBMIT: "#signup.waitingResponse",
                   },
                 },
                 companyNameTaken: {},
