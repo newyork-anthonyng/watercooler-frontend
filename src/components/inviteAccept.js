@@ -1,15 +1,15 @@
 import React from "react";
 import { useMachine } from "@xstate/react";
-import { signupStateMachine, initMachineOptions } from "./signupStateMachine";
+import {
+  inviteStateMachine,
+  initMachineOptions,
+} from "./inviteAcceptStateMachine";
 
-const SignupForm = () => {
-  const [state, send] = useMachine(signupStateMachine, initMachineOptions);
+const InviteAcceptForm = () => {
+  const [state, send] = useMachine(inviteStateMachine, initMachineOptions);
 
-  const handleCompanyNameChange = (e) => {
-    send({ type: "INPUT_COMPANY_NAME", companyName: e.target.value });
-  };
-  const handleEmailChange = (e) => {
-    send({ type: "INPUT_EMAIL", email: e.target.value });
+  const handleJoin = () => {
+    send({ type: "NEXT" });
   };
   const handleFirstNameChange = (e) => {
     send({ type: "INPUT_FIRST_NAME", firstName: e.target.value });
@@ -33,6 +33,19 @@ const SignupForm = () => {
     e.preventDefault();
     send({ type: "SUBMIT" });
   };
+
+  if (state.matches("greeting")) {
+    return (
+      <div>
+        <h1>Hi</h1>
+        <p>
+          You've been invited by <b>SOMEONE</b> to join the <b>SOMETHING</b>.
+          Click below to accept your invite, and create your account!
+        </p>
+        <button onClick={handleJoin}>Accept & join</button>
+      </div>
+    );
+  }
 
   if (state.matches("success")) {
     return (
@@ -59,27 +72,13 @@ const SignupForm = () => {
         )}
         <label>
           Company Name
-          <input
-            type="text"
-            value={state.context.companyName}
-            onChange={handleCompanyNameChange}
-          />
+          <input type="text" value={"Something"} />
         </label>
       </div>
       <div>
-        {state.matches("ready.email.error.empty") && (
-          <div>Email shouldn't be empty</div>
-        )}
-        {state.matches("ready.email.error.emailTaken") && (
-          <div>Email is already taken</div>
-        )}
         <label>
           Email
-          <input
-            type="text"
-            value={state.context.email}
-            onChange={handleEmailChange}
-          />
+          <input type="text" value={"Something"} />
         </label>
       </div>
       <div>
@@ -155,9 +154,9 @@ const SignupForm = () => {
       >
         Create Account
       </button>
-      {state.matches("waitingResponse") && <p>Creating team...</p>}
+      {state.matches("waitingResponse") && <p>Joining team...</p>}
     </form>
   );
 };
 
-export default SignupForm;
+export default InviteAcceptForm;

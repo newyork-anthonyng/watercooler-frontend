@@ -1,50 +1,38 @@
 import { Machine, assign } from "xstate";
-import signup from "../api/signup";
+import inviteAccept from "../api/inviteAccept";
 
-const signupStateMachine = Machine({
-  id: "signup",
+const inviteStateMachine = Machine({
+  id: "inviteAccept",
   context: {
-    companyName: "",
-    email: "",
     firstName: "",
     lastName: "",
     phoneNumber: "",
     password: "",
     passwordConfirmation: "",
   },
-  initial: "ready",
+  initial: "greeting",
   on: {
-    INPUT_COMPANY_NAME: {
-      actions: "cacheCompanyName",
-      target: ["ready.companyName.noError"],
-    },
-    INPUT_EMAIL: {
-      actions: "cacheEmail",
-      target: ["ready.email.noError"],
-    },
     INPUT_FIRST_NAME: {
       actions: "cacheFirstName",
-      target: ["ready.firstName.noError"],
+      target: "ready.firstName.noError",
     },
     INPUT_LAST_NAME: {
       actions: "cacheLastName",
-      target: ["ready.lastName.noError"],
+      target: "ready.lastName.noError",
     },
     INPUT_PHONE_NUMBER: {
       actions: "cachePhoneNumber",
-      target: ["ready.phoneNumber.noError"],
+      target: "ready.phoneNumber.noError",
     },
     INPUT_PASSWORD: {
       actions: "cachePassword",
-      target: ["ready.password.noError"],
+      target: "ready.password.noError",
     },
     INPUT_PASSWORD_CONFIRMATION: {
       actions: "cachePasswordConfirmation",
-      target: ["ready.passwordConfirmation.noError"],
+      target: "ready.passwordConfirmation.noError",
     },
     SUBMIT: [
-      { cond: "isNoCompanyName", target: "ready.companyName.error.empty" },
-      { cond: "isNoEmail", target: "ready.email.error.empty" },
       { cond: "isNoFirstName", target: "ready.firstName.error.empty" },
       { cond: "isNoLastName", target: "ready.lastName.error.empty" },
       { cond: "isNoPhoneNumber", target: "ready.phoneNumber.error.empty" },
@@ -57,20 +45,15 @@ const signupStateMachine = Machine({
     ],
   },
   states: {
+    greeting: {
+      on: {
+        NEXT: "ready",
+      },
+    },
     ready: {
       type: "parallel",
       states: {
-        companyName: {
-          initial: "noError",
-          states: {
-            noError: {},
-            error: {
-              intial: "empty",
-              states: { empty: {}, companyNameTaken: {} },
-            },
-          },
-        },
-        email: {
+        firstName: {
           initial: "noError",
           states: {
             noError: {},
@@ -78,18 +61,7 @@ const signupStateMachine = Machine({
               initial: "empty",
               states: {
                 empty: {},
-                emailTaken: {},
               },
-            },
-          },
-        },
-        firstName: {
-          initial: "noError",
-          states: {
-            noError: {},
-            error: {
-              initial: "empty",
-              states: { empty: {} },
             },
           },
         },
@@ -99,7 +71,9 @@ const signupStateMachine = Machine({
             noError: {},
             error: {
               initial: "empty",
-              states: { empty: {} },
+              states: {
+                empty: {},
+              },
             },
           },
         },
@@ -148,7 +122,7 @@ const signupStateMachine = Machine({
               states: {
                 communication: {
                   on: {
-                    SUBMIT: "#signup.waitingResponse",
+                    SUBMIT: "#inviteAccept.waitingResponse",
                   },
                 },
               },
@@ -159,20 +133,12 @@ const signupStateMachine = Machine({
     },
     waitingResponse: {
       invoke: {
-        src: "requestSignUp",
+        src: "requestInviteAccept",
         onDone: {
           actions: "onSuccess",
           target: "success",
         },
         onError: [
-          {
-            cond: "isCompanyNameTaken",
-            target: "ready.companyName.error.companyNameTaken",
-          },
-          {
-            cond: "isEmailTaken",
-            target: "ready.email.error.emailTaken",
-          },
           {
             cond: "isNoResponse",
             target: "ready.authService.error.communication",
@@ -180,40 +146,24 @@ const signupStateMachine = Machine({
         ],
       },
     },
-    success: {
-      type: "final",
-    },
+    success: { type: "final" },
   },
 });
 
 const initMachineOptions = {
   guards: {
-    isNoCompanyName: (context, _) => context.companyName.length === 0,
-    isNoEmail: (context, _) => context.email.length === 0,
     isNoFirstName: (context, _) => context.firstName.length === 0,
     isNoLastName: (context, _) => context.lastName.length === 0,
     isNoPhoneNumber: (context, _) => context.phoneNumber.length === 0,
     isNoPassword: (context, _) => context.password.length === 0,
     isNoPasswordConfirmation: (context, _) =>
       context.passwordConfirmation.length === 0,
-    isCompanyNameTaken: (_, event) => {
-      return event.data.code === 2;
-    },
-    isEmailTaken: (_, event) => {
-      return event.data.code === 1;
-    },
-    isNoResponse: (_, event) => event.data.code === 3,
+    isNoResponse: (_, event) => event.data.code === 1,
   },
   services: {
-    requestSignUp: (context, _) => signup(context),
+    requestInviteAccept: (context, _) => inviteAccept(context),
   },
   actions: {
-    cacheCompanyName: assign((_, event) => ({
-      companyName: event.companyName,
-    })),
-    cacheEmail: assign((_, event) => ({
-      email: event.email,
-    })),
     cacheFirstName: assign((_, event) => ({
       firstName: event.firstName,
     })),
@@ -222,6 +172,9 @@ const initMachineOptions = {
     })),
     cachePhoneNumber: assign((_, event) => ({
       phoneNumber: event.phoneNumber,
+    })),
+    cacheEmail: assign((_, event) => ({
+      email: event.email,
     })),
     cachePassword: assign((_, event) => ({
       password: event.password,
@@ -235,4 +188,4 @@ const initMachineOptions = {
   },
 };
 
-export { signupStateMachine, initMachineOptions };
+export { inviteStateMachine, initMachineOptions };
