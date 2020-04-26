@@ -193,14 +193,14 @@ const initMachineOptions = {
     isNoFirstName: (context, _) => context.firstName.length === 0,
     isNoLastName: (context, _) => context.lastName.length === 0,
     isNoPhoneNumber: (context, _) => context.phoneNumber.length === 0,
-    isNoPassword: (context, _) => context.password.length === 0,
+    isNoPassword: (context, _) => context.password.length < 6,
     isNoPasswordConfirmation: (context, _) =>
-      context.passwordConfirmation.length === 0,
+      context.password !== context.passwordConfirmation,
     isCompanyNameTaken: (_, event) => {
-      return event.data.code === 2;
+      return event.data.code === 1;
     },
     isEmailTaken: (_, event) => {
-      return event.data.code === 1;
+      return event.data.code === 2;
     },
     isNoResponse: (_, event) => event.data.code === 3,
   },

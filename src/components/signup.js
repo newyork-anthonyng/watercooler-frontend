@@ -136,7 +136,7 @@ const SignupForm = () => {
       </div>
       <div>
         {state.matches("ready.passwordConfirmation.error.empty") && (
-          <div>Password confirmation shouldn't be empty</div>
+          <div>Password confirmation doesn't match</div>
         )}
         <label>
           Re-Enter Password

@@ -1,4 +1,9 @@
-const isNoResponse = () => Math.random() >= 0.75;
+const BASE_URL = "http://localhost:3000";
+const SIGNUP_URL = `${BASE_URL}/teams`;
+
+const TEAM_NAME_TAKEN = 1;
+const EMAIL_ADDRESS_TAKEN = 2;
+const SOMETHING_WENT_WRONG_CODE = 3;
 
 const signup = ({
   companyName,
@@ -10,22 +15,60 @@ const signup = ({
   passwordConfirmation,
 }) => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (email === "admin") {
-        return reject({ code: 1 });
-      }
+    let cachedResponseHeaders = null;
 
-      if (companyName === "admin") {
-        return reject({ code: 2 });
-      }
+    fetch(SIGNUP_URL, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        team: {
+          name: companyName,
+        },
+        user: {
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber,
+          email,
+          password,
+          password_confirmation: passwordConfirmation,
+        },
+      }),
+    })
+      .then((response) => {
+        cachedResponseHeaders = {
+          ok: response.ok,
+          status: response.status,
+        };
 
-      if (isNoResponse()) {
-        return reject({ code: 3 });
-      }
-
-      resolve();
-    }, 1500);
+        return response.json();
+      })
+      .then((response) => {
+        if (cachedResponseHeaders.ok) {
+          return resolve();
+        }
+        if (teamNameTaken(response)) {
+          return reject({ code: TEAM_NAME_TAKEN });
+        }
+        if (emailAddressTaken(response)) {
+          return reject({ code: EMAIL_ADDRESS_TAKEN });
+        }
+        return reject({ code: SOMETHING_WENT_WRONG_CODE });
+      })
+      .catch(() => reject({ code: SOMETHING_WENT_WRONG_CODE }));
   });
 };
+
+function teamNameTaken(response) {
+  const nameValidationErrors = (response.team && response.team.name) || [];
+  return nameValidationErrors.includes("has already been taken");
+}
+
+function emailAddressTaken(response) {
+  const emailValidationErrors = (response.user && response.user.email) || [];
+  return emailValidationErrors.includes("has already been taken");
+}
 
 export default signup;

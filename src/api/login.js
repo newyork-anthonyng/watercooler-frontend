@@ -6,7 +6,7 @@ const SOMETHING_WENT_WRONG_CODE = 2;
 
 const signIn = (email, password) => {
   return new Promise((resolve, reject) => {
-    return fetch(LOGIN_URL, {
+    fetch(LOGIN_URL, {
       method: "POST",
       credentials: "include",
       headers: {
