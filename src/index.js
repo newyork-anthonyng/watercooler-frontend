@@ -1,12 +1,40 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import LogInForm from "./components/login";
+import SignupForm from "./components/signup";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+} from "react-router-dom";
 
 function Counter() {
   return (
-    <div>
-      <LogInForm />
-    </div>
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/login">Login</Link>
+              <Link to="/signup">Signup</Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <Switch>
+        <Route path="/login">
+          <LogInForm />
+        </Route>
+        <Route path="/signup">
+          <SignupForm />
+        </Route>
+        <Route>
+          <Redirect to="/login"></Redirect>
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
