@@ -37,7 +37,13 @@ const SignupForm = () => {
   if (state.matches("success")) {
     return (
       <div>
-        <h1>Success!</h1>
+        <h1>Thank you</h1>
+        <h2>Your form was submitted successfully.</h2>
+        <p>We are delivering a confirmation to the email you specified.</p>
+        <p>
+          Please click the verification link in that email to finish registering
+          your account!
+        </p>
       </div>
     );
   }
