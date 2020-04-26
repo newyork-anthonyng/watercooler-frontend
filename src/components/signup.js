@@ -142,6 +142,7 @@ const SignupForm = () => {
       >
         Create Account
       </button>
+      {state.matches("waitingResponse") && <p>Creating team...</p>}
     </form>
   );
 };

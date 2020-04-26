@@ -192,12 +192,16 @@ const initMachineOptions = {
     isNoPassword: (context, _) => context.password.length === 0,
     isNoPasswordConfirmation: (context, _) =>
       context.passwordConfirmation.length === 0,
-    isCompanyNameTaken: () => {},
-    isEmailTaken: () => {},
+    isCompanyNameTaken: (_, event) => {
+      return event.data.code === 2;
+    },
+    isEmailTaken: (_, event) => {
+      return event.data.code === 1;
+    },
     isNoResponse: (_, event) => event.data.code === 3,
   },
   services: {
-    requestSignUp: (context, _) => signup(context.email, context.password),
+    requestSignUp: (context, _) => signup(context),
   },
   actions: {
     cacheCompanyName: assign((_, event) => ({
