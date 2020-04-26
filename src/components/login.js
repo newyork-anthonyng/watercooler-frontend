@@ -17,7 +17,7 @@ const LogInForm = () => {
   };
 
   if (state.matches("success")) {
-    return <h1>Logging in</h1>;
+    return <h1>Logged in</h1>;
   }
 
   return (
