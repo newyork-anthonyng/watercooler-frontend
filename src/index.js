@@ -2,7 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import LogInForm from "./components/login";
 import SignupForm from "./components/signup";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+} from "react-router-dom";
 
 function Counter() {
   return (
@@ -23,6 +29,9 @@ function Counter() {
         </Route>
         <Route path="/signup">
           <SignupForm />
+        </Route>
+        <Route>
+          <Redirect to="/login"></Redirect>
         </Route>
       </Switch>
     </Router>
