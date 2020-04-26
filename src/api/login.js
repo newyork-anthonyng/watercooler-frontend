@@ -1,22 +1,37 @@
-const isNoResponse = () => Math.random() >= 0.75;
+const BASE_URL = "http://localhost:3000";
+const LOGIN_URL = `${BASE_URL}/login`;
+
+const UNAUTHORIZED_CODE = 1;
+const SOMETHING_WENT_WRONG_CODE = 2;
 
 const signIn = (email, password) => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (email !== "admin") {
-        return reject({ code: 1 });
-      }
+    return fetch(LOGIN_URL, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            return reject({ code: UNAUTHORIZED_CODE });
+          } else {
+            return reject({ code: SOMETHING_WENT_WRONG_CODE });
+          }
+        }
 
-      if (password !== "admin") {
-        return reject({ code: 2 });
-      }
-
-      if (isNoResponse()) {
-        return reject({ code: 3 });
-      }
-
-      resolve();
-    }, 1500);
+        return response.json();
+      })
+      .then((_) => {
+        resolve();
+      })
+      .catch(() => reject({ code: SOMETHING_WENT_WRONG_CODE }));
   });
 };
 
