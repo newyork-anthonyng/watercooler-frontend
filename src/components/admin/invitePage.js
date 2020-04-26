@@ -27,7 +27,6 @@ const InvitePage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("handleSubmit");
     send({ type: "SUBMIT" });
   };
 
