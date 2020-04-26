@@ -162,6 +162,7 @@ const signupStateMachine = Machine({
         src: "requestSignUp",
         onDone: {
           actions: "onSuccess",
+          target: "success",
         },
         onError: [
           {
@@ -178,6 +179,9 @@ const signupStateMachine = Machine({
           },
         ],
       },
+    },
+    success: {
+      type: "final",
     },
   },
 });

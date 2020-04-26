@@ -34,7 +34,14 @@ const SignupForm = () => {
     send({ type: "SUBMIT" });
   };
 
-  console.log(state.value);
+  if (state.matches("success")) {
+    return (
+      <div>
+        <h1>Success!</h1>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
