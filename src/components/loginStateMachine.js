@@ -75,6 +75,7 @@ const loginStateMachine = Machine({
         src: "requestSignIn",
         onDone: {
           actions: "onSuccess",
+          target: "success",
         },
         onError: [
           {
@@ -92,6 +93,9 @@ const loginStateMachine = Machine({
         ],
       },
     },
+    success: {
+      type: "final",
+    },
   },
 });
 
@@ -102,8 +106,8 @@ const initMachineOptions = {
     isNoAccount: (_, event) => {
       return event.data.code === 1;
     },
-    isIncorrectPassword: (_, event) => event.data.code === 2,
-    isNoResponse: (_, event) => event.data.code === 3,
+    isIncorrectPassword: (_, event) => event.data.code === 1,
+    isNoResponse: (_, event) => event.data.code === 2,
   },
   services: {
     requestSignIn: (context, _) => signIn(context.email, context.password),
@@ -116,7 +120,7 @@ const initMachineOptions = {
       password: event.password,
     })),
     onSuccess: () => {
-      alert("signed in");
+      // alert("signed in");
     },
   },
 };

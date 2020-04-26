@@ -16,6 +16,10 @@ const LogInForm = () => {
     send({ type: "SUBMIT" });
   };
 
+  if (state.matches("success")) {
+    return <h1>Logging in</h1>;
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
