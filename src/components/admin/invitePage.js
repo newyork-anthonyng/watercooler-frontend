@@ -36,18 +36,26 @@ const InvitePage = () => {
 
       {state.matches("loading") && <p>Loading...</p>}
       {state.matches("ready") && (
-        <form onSubmit={handleSubmit}>
-          <label>
-            Email
-            <input
-              type="text"
-              onChange={handleEmailChange}
-              value={state.context.email}
-              placeholder="Enter email"
-            />
-          </label>
-          <button type="submit">Invite</button>
-        </form>
+        <div>
+          <h2>Existing users on your team</h2>
+          <ul>
+            {state.context.users.map((email) => (
+              <li key={email}>{email}</li>
+            ))}
+          </ul>
+          <form onSubmit={handleSubmit}>
+            <label>
+              Email
+              <input
+                type="text"
+                onChange={handleEmailChange}
+                value={state.context.email}
+                placeholder="Enter email"
+              />
+            </label>
+            <button type="submit">Invite</button>
+          </form>
+        </div>
       )}
       {state.matches("waitingResponse") && <p>Inviting user...</p>}
       {state.matches("ready.inviteService.error") && (

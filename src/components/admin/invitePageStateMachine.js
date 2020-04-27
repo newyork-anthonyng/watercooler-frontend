@@ -1,10 +1,12 @@
 import { Machine, assign } from "xstate";
 import inviteUser from "../../api/inviteUser";
+import getUsers from "../../api/adminGetUsers";
 
 const inviteStateMachine = Machine({
   id: "invite",
   context: {
     email: "",
+    users: [],
   },
   initial: "loading",
 
@@ -25,6 +27,11 @@ const inviteStateMachine = Machine({
         src: "fetchInfo",
         onDone: {
           target: "ready",
+          actions: assign((_, event) => {
+            return {
+              users: event.data.users,
+            };
+          }),
         },
         onError: [
           {
@@ -89,12 +96,7 @@ const initMachineOptions = {
     isNoEmail: (context, _) => context.email.length === 0,
   },
   services: {
-    fetchInfo: (_context, _event) => {
-      console.log("fetching information");
-      return new Promise((resolve, reject) => {
-        setTimeout(resolve, 500);
-      });
-    },
+    fetchInfo: (_context, _event) => getUsers(),
     inviteUser: (context, _event) => inviteUser(context.email),
     onSuccess: (_context, _event) => {
       alert("Successfully invited user");
