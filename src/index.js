@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import LogInForm from "./components/login";
 import SignupForm from "./components/signup";
-import Invite from "./components/inviteAccept";
+
 import VerifyInvitation from "./components/verifyInvitation";
 import Admin from "./components/admin/invitePage";
 import Feed from "./components/feedPage";
@@ -48,10 +48,6 @@ function Counter() {
         </Route>
         <Route path="/signup">
           <SignupForm />
-        </Route>
-
-        <Route path="/invite">
-          <Invite />
         </Route>
 
         <Route path="/admin">

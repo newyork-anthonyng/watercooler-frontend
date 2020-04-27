@@ -5,12 +5,12 @@ import {
   initMachineOptions,
 } from "./inviteAcceptStateMachine";
 
-const InviteAcceptForm = () => {
-  const [state, send] = useMachine(inviteStateMachine, initMachineOptions);
+const InviteAcceptForm = ({ teamName, email }) => {
+  const [state, send] = useMachine(
+    inviteStateMachine(email),
+    initMachineOptions
+  );
 
-  const handleJoin = () => {
-    send({ type: "NEXT" });
-  };
   const handleFirstNameChange = (e) => {
     send({ type: "INPUT_FIRST_NAME", firstName: e.target.value });
   };
@@ -34,29 +34,11 @@ const InviteAcceptForm = () => {
     send({ type: "SUBMIT" });
   };
 
-  if (state.matches("greeting")) {
-    return (
-      <div>
-        <h1>Hi</h1>
-        <p>
-          You've been invited by <b>SOMEONE</b> to join the <b>SOMETHING</b>.
-          Click below to accept your invite, and create your account!
-        </p>
-        <button onClick={handleJoin}>Accept & join</button>
-      </div>
-    );
-  }
-
   if (state.matches("success")) {
     return (
       <div>
         <h1>Thank you</h1>
-        <h2>Your form was submitted successfully.</h2>
-        <p>We are delivering a confirmation to the email you specified.</p>
-        <p>
-          Please click the verification link in that email to finish registering
-          your account!
-        </p>
+        <h2>Your account has been updated!</h2>
       </div>
     );
   }
@@ -72,13 +54,13 @@ const InviteAcceptForm = () => {
         )}
         <label>
           Company Name
-          <input type="text" value={"Something"} />
+          <input type="text" value={teamName} disabled />
         </label>
       </div>
       <div>
         <label>
           Email
-          <input type="text" value={"Something"} />
+          <input type="text" value={email} disabled />
         </label>
       </div>
       <div>
