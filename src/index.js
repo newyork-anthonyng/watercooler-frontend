@@ -6,6 +6,7 @@ import Invite from "./components/inviteAccept";
 import VerifyInvitation from "./components/verifyInvitation";
 import Admin from "./components/admin/invitePage";
 import Feed from "./components/feedPage";
+import HomePage from "./components/homePage";
 import {
   BrowserRouter as Router,
   Switch,
@@ -20,6 +21,9 @@ function Counter() {
       <div>
         <nav>
           <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
             <li>
               <Link to="/login">Login</Link>
             </li>
@@ -36,6 +40,9 @@ function Counter() {
         </nav>
       </div>
       <Switch>
+        <Route path="/" exact>
+          <HomePage />
+        </Route>
         <Route path="/login">
           <LogInForm />
         </Route>
