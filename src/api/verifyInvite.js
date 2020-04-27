@@ -17,7 +17,16 @@ const verifyInvite = (invitationHash) => {
           return reject({ code: SOMETHING_WENT_WRONG_CODE });
         }
 
-        return resolve();
+        return response.json();
+      })
+      .then((response) => {
+        console.log("api/verifyInvite#response");
+        console.log(response);
+        if (response.data) {
+          resolve(response.data);
+        } else {
+          resolve();
+        }
       })
       .catch(() => reject({ code: SOMETHING_WENT_WRONG_CODE }));
   });

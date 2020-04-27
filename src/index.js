@@ -2,10 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import LogInForm from "./components/login";
 import SignupForm from "./components/signup";
-import Invite from "./components/inviteAccept";
+
 import VerifyInvitation from "./components/verifyInvitation";
 import Admin from "./components/admin/invitePage";
 import Feed from "./components/feedPage";
+import HomePage from "./components/homePage";
 import {
   BrowserRouter as Router,
   Switch,
@@ -20,6 +21,9 @@ function Counter() {
       <div>
         <nav>
           <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
             <li>
               <Link to="/login">Login</Link>
             </li>
@@ -36,15 +40,14 @@ function Counter() {
         </nav>
       </div>
       <Switch>
+        <Route path="/" exact>
+          <HomePage />
+        </Route>
         <Route path="/login">
           <LogInForm />
         </Route>
         <Route path="/signup">
           <SignupForm />
-        </Route>
-
-        <Route path="/invite">
-          <Invite />
         </Route>
 
         <Route path="/admin">

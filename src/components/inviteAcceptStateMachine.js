@@ -1,128 +1,126 @@
 import { Machine, assign } from "xstate";
 import inviteAccept from "../api/inviteAccept";
 
-const inviteStateMachine = Machine({
-  id: "inviteAccept",
-  context: {
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    password: "",
-    passwordConfirmation: "",
-  },
-  initial: "greeting",
-  on: {
-    INPUT_FIRST_NAME: {
-      actions: "cacheFirstName",
-      target: "ready.firstName.noError",
+const inviteStateMachine = (email) =>
+  Machine({
+    id: "inviteAccept",
+    context: {
+      firstName: "",
+      lastName: "",
+      email,
+      phoneNumber: "",
+      password: "",
+      passwordConfirmation: "",
     },
-    INPUT_LAST_NAME: {
-      actions: "cacheLastName",
-      target: "ready.lastName.noError",
-    },
-    INPUT_PHONE_NUMBER: {
-      actions: "cachePhoneNumber",
-      target: "ready.phoneNumber.noError",
-    },
-    INPUT_PASSWORD: {
-      actions: "cachePassword",
-      target: "ready.password.noError",
-    },
-    INPUT_PASSWORD_CONFIRMATION: {
-      actions: "cachePasswordConfirmation",
-      target: "ready.passwordConfirmation.noError",
-    },
-    SUBMIT: [
-      { cond: "isNoFirstName", target: "ready.firstName.error.empty" },
-      { cond: "isNoLastName", target: "ready.lastName.error.empty" },
-      { cond: "isNoPhoneNumber", target: "ready.phoneNumber.error.empty" },
-      { cond: "isNoPassword", target: "ready.password.error.empty" },
-      {
-        cond: "isNoPasswordConfirmation",
-        target: "ready.passwordConfirmation.error.empty",
+    initial: "ready",
+    on: {
+      INPUT_FIRST_NAME: {
+        actions: "cacheFirstName",
+        target: "ready.firstName.noError",
       },
-      { target: "waitingResponse" },
-    ],
-  },
-  states: {
-    greeting: {
-      on: {
-        NEXT: "ready",
+      INPUT_LAST_NAME: {
+        actions: "cacheLastName",
+        target: "ready.lastName.noError",
       },
+      INPUT_PHONE_NUMBER: {
+        actions: "cachePhoneNumber",
+        target: "ready.phoneNumber.noError",
+      },
+      INPUT_PASSWORD: {
+        actions: "cachePassword",
+        target: "ready.password.noError",
+      },
+      INPUT_PASSWORD_CONFIRMATION: {
+        actions: "cachePasswordConfirmation",
+        target: "ready.passwordConfirmation.noError",
+      },
+      SUBMIT: [
+        { cond: "isNoFirstName", target: "ready.firstName.error.empty" },
+        { cond: "isNoLastName", target: "ready.lastName.error.empty" },
+        { cond: "isNoPhoneNumber", target: "ready.phoneNumber.error.empty" },
+        { cond: "isNoPassword", target: "ready.password.error.empty" },
+        {
+          cond: "isNoPasswordConfirmation",
+          target: "ready.passwordConfirmation.error.empty",
+        },
+        { target: "waitingResponse" },
+      ],
     },
-    ready: {
-      type: "parallel",
-      states: {
-        firstName: {
-          initial: "noError",
-          states: {
-            noError: {},
-            error: {
-              initial: "empty",
-              states: {
-                empty: {},
+    states: {
+      ready: {
+        type: "parallel",
+        states: {
+          firstName: {
+            initial: "noError",
+            states: {
+              noError: {},
+              error: {
+                initial: "empty",
+                states: {
+                  empty: {},
+                },
               },
             },
           },
-        },
-        lastName: {
-          initial: "noError",
-          states: {
-            noError: {},
-            error: {
-              initial: "empty",
-              states: {
-                empty: {},
+          lastName: {
+            initial: "noError",
+            states: {
+              noError: {},
+              error: {
+                initial: "empty",
+                states: {
+                  empty: {},
+                },
               },
             },
           },
-        },
-        phoneNumber: {
-          initial: "noError",
-          states: {
-            noError: {},
-            error: {
-              initial: "empty",
-              states: {
-                empty: {},
+          phoneNumber: {
+            initial: "noError",
+            states: {
+              noError: {},
+              error: {
+                initial: "empty",
+                states: {
+                  empty: {},
+                },
               },
             },
           },
-        },
-        password: {
-          initial: "noError",
-          states: {
-            noError: {},
-            error: {
-              initial: "empty",
-              states: {
-                empty: {},
+          password: {
+            initial: "noError",
+            states: {
+              noError: {},
+              error: {
+                initial: "empty",
+                states: {
+                  empty: {},
+                },
               },
             },
           },
-        },
-        passwordConfirmation: {
-          initial: "noError",
-          states: {
-            noError: {},
-            error: {
-              initial: "empty",
-              states: {
-                empty: {},
+          passwordConfirmation: {
+            initial: "noError",
+            states: {
+              noError: {},
+              error: {
+                initial: "empty",
+                states: {
+                  empty: {},
+                },
               },
             },
           },
-        },
-        authService: {
-          initial: "noError",
-          states: {
-            noError: {},
-            error: {
-              initial: "communication",
-              states: {
-                communication: {
-                  on: {
-                    SUBMIT: "#inviteAccept.waitingResponse",
+          authService: {
+            initial: "noError",
+            states: {
+              noError: {},
+              error: {
+                initial: "communication",
+                states: {
+                  communication: {
+                    on: {
+                      SUBMIT: "#inviteAccept.waitingResponse",
+                    },
                   },
                 },
               },
@@ -130,25 +128,24 @@ const inviteStateMachine = Machine({
           },
         },
       },
-    },
-    waitingResponse: {
-      invoke: {
-        src: "requestInviteAccept",
-        onDone: {
-          actions: "onSuccess",
-          target: "success",
-        },
-        onError: [
-          {
-            cond: "isNoResponse",
-            target: "ready.authService.error.communication",
+      waitingResponse: {
+        invoke: {
+          src: "requestInviteAccept",
+          onDone: {
+            actions: "onSuccess",
+            target: "success",
           },
-        ],
+          onError: [
+            {
+              cond: "isNoResponse",
+              target: "ready.authService.error.communication",
+            },
+          ],
+        },
       },
+      success: { type: "final" },
     },
-    success: { type: "final" },
-  },
-});
+  });
 
 const initMachineOptions = {
   guards: {
